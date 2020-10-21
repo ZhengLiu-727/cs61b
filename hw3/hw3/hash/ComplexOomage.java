@@ -13,7 +13,7 @@ public class ComplexOomage implements Oomage {
     public int hashCode() {
         int total = 0;
         for (int x : params) {
-            total = total * 256;
+            total = total * 256; //change 256 to 257 can fix the problem
             total = total + x;
         }
         return total;
