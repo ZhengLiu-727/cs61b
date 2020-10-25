@@ -34,8 +34,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> nestedQueue = new Queue<>();
+        for (Item item: items) {
+            Queue<Item> single = new Queue<>();
+            single.enqueue(item);
+            nestedQueue.enqueue(single);
+        }
+        return nestedQueue;
     }
 
     /**
@@ -53,14 +58,51 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> sortedQueue = new Queue<>();
+        while (!(q1.isEmpty() && q2.isEmpty())) {
+            Item least = getMin(q1, q2);
+            sortedQueue.enqueue(least);
+        }
+        return sortedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        if (items.size() <= 1) {
+            return items;
+        }
+        Queue<Queue<Item>> nestedQueue = makeSingleItemQueues(items);
+        Queue<Item> qLeft = new Queue<>();
+        Queue<Item> qRight = new Queue<>();
+        int leftSize = nestedQueue.size() / 2; // Make left queue
+        for (int i = 0; i < leftSize; i += 1) {
+            qLeft.enqueue(nestedQueue.dequeue().dequeue());
+        }
+        int rightSize = nestedQueue.size(); // Make right queue
+        for (int i = 0; i < rightSize; i += 1) {
+            qRight.enqueue(nestedQueue.dequeue().dequeue());
+        }
+        Queue<Item> q1 = mergeSort(qLeft);
+        Queue<Item> q2 = mergeSort(qRight);
+        return mergeSortedQueues(q1, q2);
+    }
+
+    public static void main(String[] args) {
+        Queue<String> companies = new Queue<>();
+        companies.enqueue("Amazon");
+        companies.enqueue("Google");
+        companies.enqueue("Facebook");
+        companies.enqueue("Microsoft");
+        companies.enqueue("Apple");
+        companies.enqueue("LinkedIn");
+        companies.enqueue("LinkedIn"); // Checks duplicated
+        Queue<String> sortedCompanies = MergeSort.mergeSort(companies);
+
+        // should print 'Amazon Google Facebook Microsoft Apple LinkedIn LinkedIn'
+        System.out.println(companies.toString());
+
+        // should print 'Amazon Apple Facebook Google LinkedIn LinkedIn Microsoft'
+        System.out.println(sortedCompanies.toString());
     }
 }

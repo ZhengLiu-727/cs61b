@@ -47,13 +47,53 @@ public class QuickSort {
     private static <Item extends Comparable> void partition(
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
-        // Your code here!
+        for (Item item: unsorted) {
+            if (item.compareTo(pivot) < 0) {
+                less.enqueue(item);
+            } else if (item.compareTo(pivot) > 0) {
+                greater.enqueue(item);
+            } else {
+                equal.enqueue(item);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        if (items.size() <= 1) {
+            return items;
+        }
+
+        Queue<Item> equal = new Queue<>();
+        Queue<Item> greater = new Queue<>();
+        Queue<Item> less = new Queue<>();
+        Item pivot = getRandomItem(items);
+        partition(items, pivot, less, equal, greater);
+
+        Queue<Item> sortedLess = quickSort(less); // Quick sort less part
+        Queue<Item> sortedGreater = quickSort(greater); // Quick sort greater part
+
+        Queue<Item> sortedItems = catenate(sortedLess, equal);
+        sortedItems = catenate(sortedItems, sortedGreater);
+        return sortedItems;
+    }
+
+    public static void main(String[] args) {
+        Queue<String> companies = new Queue<>();
+        companies.enqueue("Amazon");
+        companies.enqueue("Google");
+        companies.enqueue("Facebook");
+        companies.enqueue("Microsoft");
+        companies.enqueue("Apple");
+        companies.enqueue("LinkedIn");
+        companies.enqueue("LinkedIn"); // Checks duplicated
+        Queue<String> sortedCompanies = QuickSort.quickSort(companies);
+
+        // should print 'Amazon Google Facebook Microsoft Apple LinkedIn LinkedIn'
+        System.out.println(companies.toString());
+
+        // should print 'Amazon Apple Facebook Google LinkedIn LinkedIn Microsoft'
+        System.out.println(sortedCompanies.toString());
     }
 }
