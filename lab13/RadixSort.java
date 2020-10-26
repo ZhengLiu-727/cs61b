@@ -4,6 +4,9 @@
  * @author Akhil Batra, Alexander Hwang
  *
  */
+import java.util.Queue;
+import java.util.LinkedList;
+
 public class RadixSort {
     /**
      * Does LSD radix sort on the passed in array with the following restrictions:
@@ -16,8 +19,42 @@ public class RadixSort {
      * @return String[] the sorted array
      */
     public static String[] sort(String[] asciis) {
-        // TODO: Implement LSD Sort
-        return null;
+        Queue<String>[] buckets = new Queue[256];
+        for (int i = 0; i < 256; i++)
+            buckets[i] = new LinkedList();
+
+        boolean sorted = false;
+        int lengthInc = 0;
+
+        String[] sortedArr = new String[asciis.length];
+        System.arraycopy(asciis, 0, sortedArr, 0, asciis.length);
+
+        while (!sorted) {
+            sorted = true;
+
+            for (String item : sortedArr) {
+                int index = item.length() - lengthInc - 1;
+                if (index >= 0) {
+                    sorted = false;
+                    int ofASCII = (int) item.charAt(index);
+                    buckets[ofASCII].add(item);
+                } else {
+                    buckets[(int) item.charAt(0)].add(item);
+                }
+            }
+
+            lengthInc++;
+            int index = 0;
+
+            for (Queue<String> bucket : buckets) {
+                while (!bucket.isEmpty()) {
+                    sortedArr[index] = bucket.remove();
+                    index++;
+                }
+            }
+        }
+
+        return sortedArr;
     }
 
     /**
